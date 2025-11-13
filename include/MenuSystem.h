@@ -17,6 +17,7 @@ public:
   void enterSubMenu(int mainIndex);
   void handleSubMenuSelection(int mainIndex, int subIndex);
   void handleItemOption(int optionIndex);
+  void goBack();
   
   // Getters
   MenuLevel getCurrentLevel() { return currentLevel; }

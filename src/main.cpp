@@ -113,6 +113,9 @@ void setup() {
 }
 
 void loop() {
+  static int lastPos = -1;
+  int currentPos = encoder.getPosition();
+  
   // Check for button press
   if (encoder.buttonPressed()) {
     menu.handleSelection();
@@ -123,7 +126,7 @@ void loop() {
     // Set bounds based on menu level
     if (menu.getCurrentLevel() == INFO_VIEW) {
       // In info view, we scroll through info items not menu items
-      encoder.setBounds(0, 10 - 1); // Adjust based on actual info count
+      encoder.setBounds(0, menu.getInfoItemsCount() - 1); // Adjust based on actual info count
     } else {
       encoder.setBounds(0, menu.getCurrentSize() - 1);
     }
@@ -140,8 +143,6 @@ void loop() {
   }
   
   // Check for encoder rotation
-  static int lastPos = -1;
-  int currentPos = encoder.getPosition();
   
   if (currentPos != lastPos) {
     lastPos = currentPos;
@@ -150,7 +151,7 @@ void loop() {
     // Update display based on current level
     if (menu.getCurrentLevel() == INFO_VIEW) {
       // Display scrollable info view
-      display.displsayInfo(menu.getInfoLabels(), 
+      display.displayInfo(menu.getInfoLabels(), 
                          menu.getInfoValues(), 
                          menu.getInfoItemsCount(), 
                          menu.getCurrentIndex());

@@ -9,16 +9,16 @@ extern WiFiManager wifi;
 static String mainMenuItemsArray[] = {"Networks", "IR", "Bluetooth", "RFID"};
 static const int mainMenuSizeValue = sizeof(mainMenuItemsArray) / sizeof(mainMenuItemsArray[0]);
 
-static String networksSubMenuArray[] = {"Scan Networks", "Connect", "Last Scan"};
+static String networksSubMenuArray[] = {"Scan Networks", "Connect", "Last Scan", "Back"};
 static const int networksSubMenuSizeValue = sizeof(networksSubMenuArray) / sizeof(networksSubMenuArray[0]);
 
-static String irSubMenuArray[] = {"Capture", "Simulate"};
+static String irSubMenuArray[] = {"Capture", "Simulate", "Back"};
 static const int irSubMenuSizeValue = sizeof(irSubMenuArray) / sizeof(irSubMenuArray[0]);
 
-static String bluetoothSubMenuArray[] = {"Scan Devices", "Pair"};
+static String bluetoothSubMenuArray[] = {"Scan Devices", "Pair", "Back"};
 static const int bluetoothSubMenuSizeValue = sizeof(bluetoothSubMenuArray) / sizeof(bluetoothSubMenuArray[0]);
 
-static String rfidSubMenuArray[] = {"Read Tag"};
+static String rfidSubMenuArray[] = {"Read Tag", "Back"};
 static const int rfidSubMenuSizeValue = sizeof(rfidSubMenuArray) / sizeof(rfidSubMenuArray[0]);
 
 static String networkOptionsArray[] = {"Connect", "Deauth", "Info", "Back"};
@@ -81,6 +81,10 @@ void MenuSystem::handleSelection() {
       break;
       
     case ITEM_LIST:
+      if(currentIndex == 0){
+        backToSubMenu();
+        break;
+      }
       parentItemIndex = currentIndex;
       currentLevel = ITEM_OPTIONS;
       setMenu(networkOptions, networkOptionsSize);
@@ -130,6 +134,8 @@ void MenuSystem::handleSubMenuSelection(int mainIndex, int subIndex) {
         delay(1500);
         backToSubMenu();
       }
+    } else if (subIndex == 3){ // Back
+      backToMainMenu();
     }
   } else if (mainIndex == 1) { // IR
     if (subIndex == 0) {
@@ -139,6 +145,8 @@ void MenuSystem::handleSubMenuSelection(int mainIndex, int subIndex) {
       display.printCentered("IR Simulate", 1);
       delay(1500);
       backToSubMenu();
+    } else if (subIndex == 2){ // Back
+      backToMainMenu();
     }
   } else if (mainIndex == 2) { // Bluetooth
     if (subIndex == 0) {
@@ -151,10 +159,14 @@ void MenuSystem::handleSubMenuSelection(int mainIndex, int subIndex) {
       display.printCentered("BT Pairing...", 1);
       delay(1500);
       backToSubMenu();
+    } else if (subIndex == 2){ // Back
+      backToMainMenu();
     }
   } else if (mainIndex == 3) { // RFID
     if (subIndex == 0) {
       readRFID();
+    } else if (subIndex == 1){ // Back
+      backToMainMenu();
     }
   }
 }
@@ -175,8 +187,9 @@ void MenuSystem::scanNetworks() {
 
   // Simulate network scanning
   scannedNetworksCount = n;
-  for(int i = 0; i < n; i++){
-    scannedNetworks[i] = nets[i].ssid;
+  scannedNetworks[0] = " Back";
+  for(int i = 1; i <= n; i++){
+    scannedNetworks[i] = nets[i - 1].ssid;
   }
   display.clear();
   display.print("Found: " + String(scannedNetworksCount), 1, 0);
@@ -187,7 +200,7 @@ void MenuSystem::scanNetworks() {
 }
 
 void MenuSystem::handleItemOption(int optionIndex) {
-  WiFiManager::NetworkInfo selectedNetwork = wifi.getNetworkByIdLastScan(parentItemIndex);
+  WiFiManager::NetworkInfo selectedNetwork = wifi.getNetworkByIdLastScan(parentItemIndex - 1);
   
   if (optionIndex == 0) { // Connect
     display.clear();
@@ -211,7 +224,7 @@ void MenuSystem::handleItemOption(int optionIndex) {
 void MenuSystem::showNetworkInfo(WiFiManager::NetworkInfo network) {
   // Simulate getting network info - replace with real WiFi data
   infoItemsCount = 0;
-  
+
   infoLabels[infoItemsCount] = "SSID";
   infoValues[infoItemsCount] = network.ssid;
   infoItemsCount++;
@@ -297,4 +310,24 @@ void MenuSystem::backToItemList() {
 void MenuSystem::backToItemOptions() {
   currentLevel = ITEM_OPTIONS;
   setMenu(networkOptions, networkOptionsSize);
+}
+
+void MenuSystem::goBack() {
+  switch (currentLevel) {
+    case SUB_MENU:
+      backToMainMenu();
+      break;
+      
+    case ITEM_LIST:
+      backToSubMenu();
+      break;
+      
+    case ITEM_OPTIONS:
+      backToItemList();
+      break;
+      
+    case INFO_VIEW:
+      backToItemOptions();
+      break;
+  }
 }

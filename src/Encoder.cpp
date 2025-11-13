@@ -157,3 +157,16 @@ bool Encoder::buttonPressed() {
   
   return false;
 }
+
+bool Encoder::isButtonHeld() {
+  static bool lastStateHeld = false;
+  static unsigned long lastTime = 0;
+
+  bool currentState = digitalRead(pinSW) == LOW;
+
+  if(lastStateHeld && currentState && millis() - lastTime < 200){
+    return true;
+  }
+  
+  return false;
+}
