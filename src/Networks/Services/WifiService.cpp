@@ -13,11 +13,11 @@
 void WifiService::softAP(){
     WiFi.mode(WIFI_AP);
     WiFi.softAP(
-        _apConfig.ssid.c_str(),
-        _apConfig.password.c_str(),
-        _apConfig.channel,
-        _apConfig.hidden,
-        _apConfig.maxConnections
+        apConfig.ssid.c_str(),
+        apConfig.password.c_str(),
+        apConfig.channel,
+        apConfig.hidden,
+        apConfig.maxConnections
     );
 }
 
@@ -26,15 +26,15 @@ void WifiService::stopSoftAP(){
 }
 
 void WifiService::setSoftAPConfig(SoftAPConfig newConfig){
-    _apConfig = newConfig;
+    apConfig = newConfig;
 }
 
 SoftAPConfig WifiService::getSoftAPConfig(){
-    return _apConfig;
+    return apConfig;
 }
 
 void WifiService::scanAPs(){
-    _scannedNetworks.clear();
+    scannedNetworks.clear();
 
     int n = WiFi.scanNetworks();
     for(int i = 0; i < n; i++){
@@ -46,12 +46,12 @@ void WifiService::scanAPs(){
         ap.channel = WiFi.channel(i);
         ap.authMode = WiFi.encryptionType(i);
         ap.hidden = false;
-        _scannedNetworks.push_back(ap);
+        scannedNetworks.push_back(ap);
     }
 }
 
 AccessPoint WifiService::getAPbySSID(String ssid){
-    for(AccessPoint i : _scannedNetworks){
+    for(AccessPoint i : scannedNetworks){
         if(i.ssid == ssid) return i;
     }
 
@@ -59,9 +59,9 @@ AccessPoint WifiService::getAPbySSID(String ssid){
 }
 
 AccessPoint WifiService::getAPbyID(int i){
-    return _scannedNetworks[i];
+    return scannedNetworks[i];
 }
 
 std::vector<AccessPoint> WifiService::getScannedAPs(){
-    return _scannedNetworks;
+    return scannedNetworks;
 }

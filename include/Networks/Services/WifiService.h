@@ -7,8 +7,8 @@
 
 class WifiService {
 private:
-    SoftAPConfig _apConfig;
-    std::vector<AccessPoint> _scannedNetworks; 
+    SoftAPConfig apConfig;
+    std::vector<AccessPoint> scannedNetworks; 
 
 public:
     // WifiService();
