@@ -13,7 +13,12 @@ enum ColorsHue{
 };
 
 class LedRGB {
+private:
+    uint32_t lastColor = 0;
+    Adafruit_NeoPixel pixel;
+
 public:
+    LedRGB() : pixel(NUM_PIXELS, RGB_PIN, NEO_GRB + NEO_KHZ800) {};
     void init();
     void setColor(ColorsHue color);
     void turnOff();

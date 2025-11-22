@@ -1,19 +1,19 @@
 #include "RGB/LedRGB.h"
 
 #define LED_BRIGHTNESS 2
+#define INIT_BLINKS 3
 
-Adafruit_NeoPixel pixel(NUM_PIXELS, RGB_PIN, NEO_GRB + NEO_KHZ800);
 
 void LedRGB::init(){
     pixel.begin();
     pixel.setBrightness(LED_BRIGHTNESS);
     setColor(YELLOW);
-    blink(5);
+    blink(INIT_BLINKS);
 }
 
 void LedRGB::setColor(ColorsHue colorHue){
-    uint32_t color = pixel.gamma32(pixel.ColorHSV(colorHue)); // Hue goes from 0 to 65535 for full cycle
-    pixel.setPixelColor(0, color);
+    lastColor = pixel.gamma32(pixel.ColorHSV(colorHue)); // Hue goes from 0 to 65535 for full cycle
+    pixel.setPixelColor(0, lastColor);
     pixel.show();
 }
 
@@ -32,28 +32,22 @@ void LedRGB::setColor(ColorsHue colorHue){
  }
 
  void LedRGB::blink(int times){
-    // uint8_t firstBrightness = pixel.getBrightness();
-    // for(int i = 0; i < times; i++){
-    //     setBrightness(0);
-    //     delay(150);
-
-    //     setBrightness(LED_BRIGHTNESS);
-    //     delay(150);
-    // }
-    // setBrightness(firstBrightness);
-
     uint8_t firstBrightness = pixel.getBrightness();
-    uint32_t currentColor = pixel.getPixelColor(0); 
     for(int i = 0; i < times; i++){
         turnOff();
         delay(150);
 
-        pixel.setPixelColor(0, currentColor);
+        if (lastColor != 0) {
+            pixel.setPixelColor(0, lastColor);
+        } else {
+            // fallback color if LED was off
+            pixel.setPixelColor(0, pixel.Color(255, 255, 255)); // white
+        }
 
         setBrightness(LED_BRIGHTNESS);
         delay(150);
     }
 
-    pixel.setPixelColor(0, currentColor);
+    pixel.setPixelColor(0, lastColor);
     setBrightness(firstBrightness);
  }
