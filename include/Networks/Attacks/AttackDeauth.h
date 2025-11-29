@@ -13,7 +13,7 @@ private:
 public:
     AttackDeauth(const MacAddress& sourceAP, const MacAddress& targetSTA);
 
-    void start(unsigned int seconds = DEFAULT_SECONDS_DEAUTH);
+    void start(volatile bool* stopFlag, unsigned int seconds = DEFAULT_SECONDS_DEAUTH);
     // void stop();
     attack_status_t getStatus();
 

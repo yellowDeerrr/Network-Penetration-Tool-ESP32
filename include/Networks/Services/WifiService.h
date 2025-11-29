@@ -3,15 +3,18 @@
 #include <Arduino.h>
 #include <vector>
 #include <esp_wifi.h>
+
 #include "Networks/Types/WifiTypes.h"
+#include "RGB/LedRGB.h"
 
 class WifiService {
 private:
     SoftAPConfig apConfig;
+    LedRGB& led;
     std::vector<AccessPoint> scannedNetworks; 
 
 public:
-    // WifiService();
+    WifiService(LedRGB& refLed) : led(refLed) {}
     // WifiService(SoftAPConfig initConfig);
 
     // SoftAP

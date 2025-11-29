@@ -8,10 +8,12 @@
 
 #include "RGB/LedRGB.h"
 
-WifiService wifi;
-AttackService attackService;
+#define DEBOUNCE_BUTTON_TIME 300
+
 LedRGB led;
-Web server(led);
+WifiService wifi(led);
+AttackService attackService(led);
+Web server(led, wifi);
 
 
 void setup(){
@@ -27,28 +29,52 @@ void setup(){
 
     server.init();
 
-
     IPAddress IP = WiFi.softAPIP();
     Serial.print("AP IP address: ");
     Serial.println(IP);
 
-    led.setColor(GREEN);
+    led.setColor(IDLE);
 }
 
-void loop(){
-    server.handle();
-    if(!digitalRead(0)){
-        MacAddress apMac = MacAddress::fromString("TARGET_AP");
-        MacAddress staMac = MacAddress::fromString("TARGET_STA");
-        
-        led.setColor(RED);
-        
-        attackService.startDeauthAttack(apMac, staMac, 10);
-        
-        led.setColor(GREEN);
+unsigned long now, lastButtonPress = 0;
 
-        Serial.println(attackService.getExecutionTime());
+void loop(){
+    now = millis();
+    server.handle();
+    led.handle();
+
+    if(!digitalRead(0) && now - lastButtonPress >= DEBOUNCE_BUTTON_TIME){
+        if (attackService.getCurrentStatus() == attack_status_t::Running) {
+            attackService.stopAttack();
+            led.handleStatus(CANCELED);
+        }else{
+            MacAddress apMac = MacAddress::fromString("TARGET_AP");
+            MacAddress staMac = MacAddress::fromString("TARGET_STA");
+            
+            attackService.startDeauthAttack(apMac, staMac, 10);
+            
+            // led.setColor(GREEN);
+
+            // Serial.println(attackService.getExecutionTime());
+
+            // led.setColor(RED);
+            // wifi.scanAPs();
+
+            // std::vector<AccessPoint> nets = wifi.getScannedAPs();
+
+            // for(AccessPoint i : nets){
+            //     Serial.print("SSID: ");
+            //     Serial.println(i.ssid);
+            //     Serial.print("RSSI: ");
+            //     Serial.println(i.rssi);
+            //     Serial.print("BSSID: ");
+            //     Serial.println(i.bssid);
+            //     Serial.println();
+            // }
+        }
+        lastButtonPress = now;
     }
-    // delay(1000);
+
+    
     delay(100);
 }

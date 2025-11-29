@@ -14,6 +14,7 @@ enum class attack_status_t {
     Idle,
     Running,
     Completed,
+    Canceled,
     Failed
 };
 

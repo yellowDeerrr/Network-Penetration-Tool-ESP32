@@ -1,4 +1,5 @@
 #include "Networks/Services/WifiService.h"
+
 #include <WiFi.h>
 
 // WifiService::WifiService(){
@@ -36,6 +37,8 @@ SoftAPConfig WifiService::getSoftAPConfig(){
 void WifiService::scanAPs(){
     scannedNetworks.clear();
 
+    led.handleStatus(SCAN);
+
     int n = WiFi.scanNetworks();
     for(int i = 0; i < n; i++){
         AccessPoint ap;
@@ -48,6 +51,8 @@ void WifiService::scanAPs(){
         ap.hidden = false;
         scannedNetworks.push_back(ap);
     }
+
+    led.handleStatus(COMPLETED);
 }
 
 AccessPoint WifiService::getAPbySSID(String ssid){

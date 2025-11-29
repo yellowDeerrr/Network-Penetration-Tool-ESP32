@@ -1,6 +1,7 @@
 #include "Networks/Types/AttackTypes.h"
 
 #include "Networks/Attacks/AttackDeauth.h"
+#include "RGB/LedRGB.h"
 
 class AttackService {
 private:
@@ -9,10 +10,16 @@ private:
     unsigned long startMillis = 0;
     unsigned long elapsedMillis = 0;
 
+    LedRGB& led;
+
     AttackDeauth* deauthAttack = nullptr;
+    TaskHandle_t attackTaskHandle = nullptr;
+    volatile bool stopRequested = false;
+
+    static void attackTask(void *param);
 
 public:
-    AttackService();
+    AttackService(LedRGB& refLed) : led(refLed) {}
     ~AttackService();
 
     void startDeauthAttack(const MacAddress& sourceAP, const MacAddress& targetSTA, unsigned int seconds = DEFAULT_SECONDS_DEAUTH);
@@ -20,6 +27,7 @@ public:
     // void startPMKIDAttack(const MacAddress& sourceAP, const MacAddress& targetSTA);
 
     void stopAttack();
+    void cancelAttack();
 
     attack_t getCurrentType() const;
     attack_status_t getCurrentStatus() const;
