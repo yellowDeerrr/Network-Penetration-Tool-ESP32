@@ -56,7 +56,7 @@ private:
 public:
     LedRGB() : pixel(NUM_PIXELS, RGB_PIN, NEO_GRB + NEO_KHZ800) {};
     void init();
-    void handle();
+    void handle(unsigned long now);
     void setColor(ColorsRGB color);
     void handleStatus(ColorsRGB status);
     void turnOff();

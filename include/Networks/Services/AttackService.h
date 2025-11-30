@@ -16,6 +16,8 @@ private:
     TaskHandle_t attackTaskHandle = nullptr;
     volatile bool stopRequested = false;
 
+    unsigned int attackDuration = DEFAULT_SECONDS_DEAUTH;
+
     static void attackTask(void *param);
 
 public:

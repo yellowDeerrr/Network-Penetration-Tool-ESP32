@@ -40,8 +40,8 @@ unsigned long now, lastButtonPress = 0;
 
 void loop(){
     now = millis();
+    led.handle(now);
     server.handle();
-    led.handle();
 
     if(!digitalRead(0) && now - lastButtonPress >= DEBOUNCE_BUTTON_TIME){
         if (attackService.getCurrentStatus() == attack_status_t::Running) {
@@ -51,30 +51,10 @@ void loop(){
             MacAddress apMac = MacAddress::fromString("TARGET_AP");
             MacAddress staMac = MacAddress::fromString("TARGET_STA");
             
-            attackService.startDeauthAttack(apMac, staMac, 10);
-            
-            // led.setColor(GREEN);
-
-            // Serial.println(attackService.getExecutionTime());
-
-            // led.setColor(RED);
-            // wifi.scanAPs();
-
-            // std::vector<AccessPoint> nets = wifi.getScannedAPs();
-
-            // for(AccessPoint i : nets){
-            //     Serial.print("SSID: ");
-            //     Serial.println(i.ssid);
-            //     Serial.print("RSSI: ");
-            //     Serial.println(i.rssi);
-            //     Serial.print("BSSID: ");
-            //     Serial.println(i.bssid);
-            //     Serial.println();
-            // }
+            attackService.startDeauthAttack(apMac, staMac, 4);
         }
         lastButtonPress = now;
     }
-
     
     delay(100);
 }

@@ -15,7 +15,7 @@ void AttackService::attackTask(void *param){
     AttackService* self = static_cast<AttackService*>(param);
 
     self->currentStatus = attack_status_t::Running;
-    self->deauthAttack->start(&(self->stopRequested), DEFAULT_SECONDS_DEAUTH);
+    self->deauthAttack->start(&(self->stopRequested), self->attackDuration);
 
     self->currentStatus = self->deauthAttack->getStatus();
     self->elapsedMillis = millis();
@@ -37,6 +37,8 @@ void AttackService::startDeauthAttack(const MacAddress& sourceAP, const MacAddre
 
     stopRequested = false;
     startMillis = millis();
+
+    attackDuration = seconds;
     
     led.handleStatus(ATTACK);
 

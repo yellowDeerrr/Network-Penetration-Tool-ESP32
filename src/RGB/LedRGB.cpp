@@ -20,9 +20,9 @@ void LedRGB::setColor(ColorsRGB color){
     pixel.show();
 }
 
-void LedRGB::handle(){
+void LedRGB::handle(unsigned long now){
    if(delayColor){
-      if(millis() - startedDelayTime >= delayTime) {
+      if(now - startedDelayTime >= delayTime) {
          setColor(IDLE);
          delayColor = false;
       }
