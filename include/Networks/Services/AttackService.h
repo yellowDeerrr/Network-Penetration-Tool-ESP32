@@ -6,7 +6,7 @@
 class AttackService {
 private:
     attack_t currentType = attack_t::None;
-    attack_status_t currentStatus = attack_status_t::Idle;
+    status_t currentStatus = status_t::Idle;
     unsigned long startMillis = 0;
     unsigned long elapsedMillis = 0;
 
@@ -32,6 +32,6 @@ public:
     void cancelAttack();
 
     attack_t getCurrentType() const;
-    attack_status_t getCurrentStatus() const;
+    status_t getCurrentStatus() const;
     unsigned long getExecutionTime();
 };

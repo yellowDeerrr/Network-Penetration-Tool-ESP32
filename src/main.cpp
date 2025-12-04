@@ -1,8 +1,9 @@
 #include <Arduino.h>
 #include <WiFi.h>
 
-#include "Networks/Services/WifiService.h"
+#include "Networks/Services/Wifi/WifiService.h"
 #include "Networks/Services/AttackService.h"
+#include "Networks/Services/Wifi/WifiScanService.h"
 
 #include "Web/Web.h"
 
@@ -13,6 +14,7 @@
 LedRGB led;
 WifiService wifi(led);
 AttackService attackService(led);
+WifiScanService scanner(led);
 Web server(led, wifi);
 
 
@@ -42,16 +44,21 @@ void loop(){
     now = millis();
     led.handle(now);
     server.handle();
+    Serial.println(".");
 
     if(!digitalRead(0) && now - lastButtonPress >= DEBOUNCE_BUTTON_TIME){
-        if (attackService.getCurrentStatus() == attack_status_t::Running) {
+        if (attackService.getCurrentStatus() == status_t::Running) {
             attackService.stopAttack();
             led.handleStatus(CANCELED);
+        }else if (scanner.isScanning()){
+            scanner.cancelScan();
         }else{
-            MacAddress apMac = MacAddress::fromString("TARGET_AP");
-            MacAddress staMac = MacAddress::fromString("TARGET_STA");
+            scanner.startScan();
+
+            // MacAddress apMac = MacAddress::fromString("TARGET_AP");
+            // MacAddress staMac = MacAddress::fromString("TARGET_STA");
             
-            attackService.startDeauthAttack(apMac, staMac, 4);
+            // attackService.startDeauthAttack(apMac, staMac, 4);
         }
         lastButtonPress = now;
     }

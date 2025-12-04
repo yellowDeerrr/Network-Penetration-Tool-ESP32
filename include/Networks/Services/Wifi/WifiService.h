@@ -5,13 +5,15 @@
 #include <esp_wifi.h>
 
 #include "Networks/Types/WifiTypes.h"
+
 #include "RGB/LedRGB.h"
+#include "Networks/Services/Wifi/WifiService.h"
+
 
 class WifiService {
 private:
     SoftAPConfig apConfig;
     LedRGB& led;
-    std::vector<AccessPoint> scannedNetworks; 
 
 public:
     WifiService(LedRGB& refLed) : led(refLed) {}

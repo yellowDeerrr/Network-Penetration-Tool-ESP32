@@ -2,6 +2,7 @@
 
 #include <Arduino.h>
 #include <Networks/Types/WifiTypes.h>
+#include <Networks/Types/GeneralTypes.h>
 
 enum class attack_t {
     None,
@@ -10,16 +11,8 @@ enum class attack_t {
     PMKID
 };
 
-enum class attack_status_t {
-    Idle,
-    Running,
-    Completed,
-    Canceled,
-    Failed
-};
-
 struct DeauthAttackState {
-    attack_status_t status = attack_status_t::Idle;
+    status_t status = status_t::Idle;
     MacAddress targetSTA;
     MacAddress sourceAP;
 };

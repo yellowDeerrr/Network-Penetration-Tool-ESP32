@@ -8,7 +8,7 @@ const unsigned int ONE_CYCLE_BURST_SENDING =
     (SEND_PACKET_DELAY * PACKETS_PER_BURST + SEND_BURST_DELAY) + 1;
 
 AttackDeauth::AttackDeauth(const MacAddress& sourceAP, const MacAddress& targetSTA){
-    state.status = attack_status_t::Idle;
+    state.status = status_t::Idle;
     state.sourceAP = sourceAP;
     state.targetSTA = targetSTA;
 
@@ -18,7 +18,7 @@ AttackDeauth::AttackDeauth(const MacAddress& sourceAP, const MacAddress& targetS
 }
 
 void AttackDeauth::start(volatile bool* stopFlag, unsigned int seconds){
-    state.status = attack_status_t::Running;
+    state.status = status_t::Running;
 
     Serial.println("Sending deauth packets...");
 
@@ -36,14 +36,14 @@ void AttackDeauth::start(volatile bool* stopFlag, unsigned int seconds){
 
     if (*stopFlag) {
         Serial.println("\nAttack stopped");
-        state.status = attack_status_t::Canceled;
+        state.status = status_t::Canceled;
     } else {
         Serial.println("\nAttack completed");
-        state.status = attack_status_t::Completed;
+        state.status = status_t::Completed;
     }
 }
 
-attack_status_t AttackDeauth::getStatus(){
+status_t AttackDeauth::getStatus(){
     return state.status;
 }
 

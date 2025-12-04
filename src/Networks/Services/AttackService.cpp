@@ -14,7 +14,7 @@ AttackService::~AttackService() {
 void AttackService::attackTask(void *param){
     AttackService* self = static_cast<AttackService*>(param);
 
-    self->currentStatus = attack_status_t::Running;
+    self->currentStatus = status_t::Running;
     self->deauthAttack->start(&(self->stopRequested), self->attackDuration);
 
     self->currentStatus = self->deauthAttack->getStatus();
@@ -25,7 +25,7 @@ void AttackService::attackTask(void *param){
 
     self->attackTaskHandle = nullptr;
 
-    if(self->currentStatus == attack_status_t::Completed) self->led.handleStatus(ColorsRGB::COMPLETED);
+    if(self->currentStatus == status_t::Completed) self->led.handleStatus(ColorsRGB::COMPLETED);
 
     vTaskDelete(NULL);
 }
@@ -73,7 +73,7 @@ void AttackService::stopAttack(){
     }
 
     currentType = attack_t::None;
-    currentStatus = attack_status_t::Idle;
+    currentStatus = status_t::Idle;
 }
 
 void AttackService::cancelAttack(){
@@ -85,7 +85,7 @@ attack_t AttackService::getCurrentType() const {
     return currentType;
 }
 
-attack_status_t AttackService::getCurrentStatus() const {
+status_t AttackService::getCurrentStatus() const {
     return currentStatus;
 }
 
